@@ -4,6 +4,7 @@ import { NewsArticle } from "../lib/news";
 import NewsCard from "./NewsCard";
 import { useState } from "react";
 import { Input } from "./ui/input";
+import { useEffect } from "react";
 
 interface NewsListProps {
   articles: NewsArticle[];
@@ -11,9 +12,33 @@ interface NewsListProps {
 
 export default function NewsList({ articles }: NewsListProps) {
     const [query, setQuery] = useState("");
+    const [favorites, setFavorites] = useState<number[]>([]);
+    
+    useEffect(() => {
+        const stored = localStorage.getItem("favorite-news-ids");
+        if (stored) {
+            // eslint-disable-next-line
+            setFavorites(JSON.parse(stored));
+  }
+}, []);
+
+useEffect(() => {
+  localStorage.setItem("favorite-news-ids", JSON.stringify(favorites));
+}, [favorites]);
+
+    function toggleFavorite(id: number) {
+        setFavorites((prev) => {
+            if (prev.includes(id)) {
+                return prev.filter((favId) => favId !== id);
+            } else {
+                return [...prev, id];
+            }
+        });
+    }
+
     const filteredArticles = articles.filter((article) =>
-  article.title.toLowerCase().includes(query.toLowerCase())
-);
+      article.title.toLowerCase().includes(query.toLowerCase())
+    );
     return (
     <div>
       <Input
@@ -28,7 +53,12 @@ export default function NewsList({ articles }: NewsListProps) {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredArticles.map((article) => (
-            <NewsCard key={article.id} article={article} />
+            <NewsCard 
+            key={article.id} 
+            article={article} 
+            isFavorite={favorites.includes(article.id)}
+            onToggleFavorite={() => toggleFavorite(article.id)}
+            />
           ))}
         </div>
       )}
