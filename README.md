@@ -1,17 +1,18 @@
 # Local News & Weather Feed
 
-Et lille dashboard, der viser de 5 seneste nyhedsoverskrifter og det aktuelle vejr i Aarhus samlet ét sted.
+Dashboard, that shows the latest 5 news headlines and the actual weather in Aarhus.
 
-## Kør projektet lokalt
+## Run the project locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-Åbn derefter [http://localhost:3000](http://localhost:3000) i browseren.
+Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Data
 
-- **Vejr**: hentes live fra [Open-Meteo](https://open-meteo.com/) (kræver ingen API-nøgle).
-- **Nyheder**: mock-data fra [`data/mock-news.json`](data/mock-news.json).
+- **Weather**: API from [Open-Meteo](https://open-meteo.com/) (no requiremnt of API key).
+- **News**: mock-data can be found in the [`data/mock-news.json`](data/mock-news.json).
+- Will probably update news mock data to a real API soon.
