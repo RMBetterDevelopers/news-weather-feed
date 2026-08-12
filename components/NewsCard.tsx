@@ -1,4 +1,10 @@
 import { NewsArticle } from "../lib/news";
+import { Card } from "./ui/card";
+import { CardHeader } from "./ui/card";
+import { CardTitle } from "./ui/card";
+import { CardDescription } from "./ui/card";
+import { Badge } from "./ui/badge";
+
 
 interface NewsCardProps {
   article: NewsArticle;
@@ -6,12 +12,14 @@ interface NewsCardProps {
 
 export default function NewsCard({ article }: NewsCardProps) {
   return (
-    <div className ="rounded-lg bg-white shadow p-4">
-        <h3 className="font-semibold text-gray-900">{article.title}</h3>
-        <p className="text-sm text-gray-500 mt-1">
-        {article.source} ·{" "}
+    <Card>
+        <CardHeader>
+        <CardTitle>{article.title}</CardTitle>
+        <CardDescription>
+        <Badge variant="secondary">{article.source} ·{" "}</Badge>
         {new Date(article.publishedAt).toLocaleDateString("da-DK")}
-        </p>
-    </div>
+        </CardDescription>
+        </CardHeader>
+    </Card>
   );
 }

@@ -10,7 +10,7 @@ export default async function Home() {
     ]);
 
   return (
-    <main className="max-w-5xl mx-auto p-6">
+    <main className="w-full max-w-5xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">Dagens overblik</h1>
       <WeatherWidget data={weather} />
       <h2 className="text-xl font-semibold mb-4 mt-8">Nyheder</h2>
