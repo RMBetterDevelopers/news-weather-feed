@@ -3,7 +3,7 @@
 import { NewsArticle } from "../lib/news";
 import NewsCard from "./news-card";
 import { useState } from "react";
-import { Input } from "./ui/input";
+import { Input } from "../../../components/ui/input";
 import { useEffect } from "react";
 
 interface NewsListProps {

@@ -1,11 +1,11 @@
 import { NewsArticle } from "../lib/news";
-import { Card } from "./ui/card";
-import { CardHeader } from "./ui/card";
-import { CardTitle } from "./ui/card";
-import { CardDescription } from "./ui/card";
-import { CardAction } from "./ui/card";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
+import { Card } from "@/components/ui/card";
+import { CardHeader } from "@/components/ui/card";
+import { CardTitle } from "@/components/ui/card";
+import { CardDescription } from "@/components/ui/card";
+import { CardAction } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface NewsCardProps {
   article: NewsArticle;

@@ -1,8 +1,8 @@
 import { WeatherData } from "../lib/weather";
-import { Card } from "./ui/card";
-import { CardHeader } from "./ui/card";
-import { CardTitle } from "./ui/card";
-import { CardContent } from "./ui/card";
+import { Card } from "../../../components/ui/card";
+import { CardHeader } from "../../../components/ui/card";
+import { CardTitle } from "../../../components/ui/card";
+import { CardContent } from "../../../components/ui/card";
 
 interface WeatherWidgetProps {
   data: WeatherData;
