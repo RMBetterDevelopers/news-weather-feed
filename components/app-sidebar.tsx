@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "@/components/theme-toggle-loader";
 import {
   Sidebar,
   SidebarContent,
@@ -12,6 +13,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 
 const tasks = [
@@ -28,6 +30,8 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
+        <ThemeToggle />
+        <p></p>
         <span className="px-2 text-lg font-semibold">Opgaver</span>
       </SidebarHeader>
       <SidebarContent>
