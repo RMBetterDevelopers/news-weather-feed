@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/sidebar";
 
 const tasks = [
-  { title: "Opgave 1", url: "/opgave-1" },
-  { title: "Opgave 2", url: "/opgave-2" },
+  { title: "Dagens overblik", url: "/opgave-1" },
+  { title: "7-dages vejrudsigt", url: "/opgave-2" },
   { title: "Opgave 3", url: "/opgave-3" },
   { title: "Opgave 4", url: "/opgave-4" },
   { title: "Opgave 5", url: "/opgave-5" },
