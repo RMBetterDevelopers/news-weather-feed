@@ -16,6 +16,13 @@ interface NewsCardProps {
 export default function NewsCard({ article, isFavorite, onToggleFavorite }: NewsCardProps) {
   return (
     <Card>
+      {article.imageUrl && (
+        <img 
+        src={article.imageUrl}
+        alt={article.title}
+        className="aspect-video w-full object-cover"
+        />
+      )}
       <CardHeader>
         <CardTitle>{article.title}</CardTitle>
         <CardAction>

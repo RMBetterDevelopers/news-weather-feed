@@ -12,7 +12,7 @@ interface NewsListProps {
 
 export default function NewsList({ articles }: NewsListProps) {
     const [query, setQuery] = useState("");
-    const [favorites, setFavorites] = useState<number[]>([]);
+    const [favorites, setFavorites] = useState<string[]>([]);
     
     useEffect(() => {
         const stored = localStorage.getItem("favorite-news-ids");
@@ -26,7 +26,7 @@ useEffect(() => {
   localStorage.setItem("favorite-news-ids", JSON.stringify(favorites));
 }, [favorites]);
 
-    function toggleFavorite(id: number) {
+    function toggleFavorite(id: string) {
         setFavorites((prev) => {
             if (prev.includes(id)) {
                 return prev.filter((favId) => favId !== id);
