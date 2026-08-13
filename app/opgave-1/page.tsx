@@ -1,6 +1,6 @@
-import { getAarhusWeather } from "@/app/opgave-1/lib/weather";
+import { getAarhusWeather } from "@/lib/weather";
 import { getTopNews } from "./lib/news";
-import WeatherWidget from "@/app/opgave-1/components/weather-widget";
+import WeatherWidget from "@/components/weather-widget";
 import NewsList from "@/app/opgave-1/components/news-list";
 import ThemeToggle from "@/components/theme-toggle-loader";
 
