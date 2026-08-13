@@ -2,7 +2,7 @@ import { getAarhusWeather } from "@/lib/weather";
 import { getTopNews } from "@/lib/news";
 import WeatherWidget from "@/components/WeatherWidget";
 import NewsList from "@/components/NewsList";
-import ThemeToggle from "@/components/ThemeToggle";
+import ThemeToggle from "@/components/ThemeToggleLoader";
 
 export default async function Home() {
   const [weather, news] = await Promise.all([
