@@ -1,0 +1,9 @@
+[
+  { "weekday": "mandag", "congestion": "high" },
+  { "weekday": "tirsdag", "congestion": "medium" },
+  { "weekday": "onsdag", "congestion": "medium" },
+  { "weekday": "torsdag", "congestion": "medium" },
+  { "weekday": "fredag", "congestion": "high" },
+  { "weekday": "lørdag", "congestion": "low" },
+  { "weekday": "søndag", "congestion": "low" }
+]
