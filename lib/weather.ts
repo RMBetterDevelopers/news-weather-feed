@@ -19,6 +19,7 @@ export interface DailyForecast {
     minTemp: number;
     precipationChance: number;
     maxWindSpeed: number;
+    weatherCode: number;
 }
 
 interface OpenMeteoResponse {
@@ -107,5 +108,6 @@ export async function getAarhusForecast(): Promise<DailyForecast[]> {
         minTemp: data.daily.temperature_2m_min[index],
         precipationChance: data.daily.precipitation_probability_max[index],
         maxWindSpeed: data.daily.wind_speed_10m_max[index],
+        weatherCode: data.daily.weather_code[index],
     }));
 }
