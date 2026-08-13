@@ -1,7 +1,7 @@
 "use client";
 
 import { NewsArticle } from "../lib/news";
-import NewsCard from "./NewsCard";
+import NewsCard from "./news-card";
 import { useState } from "react";
 import { Input } from "./ui/input";
 import { useEffect } from "react";

@@ -2,6 +2,6 @@
 
 import dynamic from "next/dynamic";
 
-const ThemeToggle = dynamic(() => import("./ThemeToggle"), { ssr: false });
+const ThemeToggle = dynamic(() => import("./theme-toggle"), { ssr: false });
 
 export default ThemeToggle;
