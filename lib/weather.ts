@@ -2,6 +2,7 @@ const AARHUS_LATITUDE = 56.1629;
 const AARHUS_LONGITUDE = 10.2039;
 
 const WEATHER_API_URL = `https://api.open-meteo.com/v1/forecast?latitude=${AARHUS_LATITUDE}&longitude=${AARHUS_LONGITUDE}` + `&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code` + `&timezone=Europe/Berlin`;
+const FORECAST_API_URL = `https://api.open-meteo.com/v1/forecast?latitude=${AARHUS_LATITUDE}&longitude=${AARHUS_LONGITUDE}` + `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max` + `&forecast_days=7&timezone=Europe/Berlin`;
 
 export interface WeatherData {
     temperature: number;
@@ -11,6 +12,15 @@ export interface WeatherData {
     description: string;
 }
 
+export interface DailyForecast {
+    date: string;
+    description: string;
+    maxTemp: number;
+    minTemp: number;
+    precipationChance: number;
+    maxWindSpeed: number;
+}
+
 interface OpenMeteoResponse {
     current: {
         temperature_2m: number;
@@ -18,6 +28,17 @@ interface OpenMeteoResponse {
         relative_humidity_2m: number;
         wind_speed_10m: number;
         weather_code: number;
+    };
+}
+
+interface openMeteoForecastResponse {
+    daily: {
+        time: string[];
+        weather_code: number[];
+        temperature_2m_max: number[];
+        temperature_2m_min: number[];
+        precipitation_probability_max: number[];
+        wind_speed_10m_max: number[];
     };
 }
 
@@ -66,4 +87,25 @@ return {
     windSpeed: current.wind_speed_10m,
     description: getWeatherDescription(current.weather_code),
   };
+}
+
+export async function getAarhusForecast(): Promise<DailyForecast[]> {
+    const response = await fetch(FORECAST_API_URL, {
+        next: { revalidate: 600 },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Kunne ikke hente vejrudsigt: ${response.status}`);
+    }
+
+    const data: openMeteoForecastResponse = await response.json();
+
+    return data.daily.time.map((date, index) => ({
+        date,
+        description: getWeatherDescription(data.daily.weather_code[index]),
+        maxTemp: data.daily.temperature_2m_max[index],
+        minTemp: data.daily.temperature_2m_min[index],
+        precipationChance: data.daily.precipitation_probability_max[index],
+        maxWindSpeed: data.daily.wind_speed_10m_max[index],
+    }));
 }
