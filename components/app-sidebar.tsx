@@ -13,14 +13,13 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarFooter,
 } from "@/components/ui/sidebar";
 
 const tasks = [
   { title: "Dagens overblik", url: "/opgave-1" },
   { title: "7-dages vejrudsigt", url: "/opgave-2" },
   { title: "Bedste pendlermetode", url: "/opgave-3" },
-  { title: "Opgave 4", url: "/opgave-4" },
+  { title: "Dashboard", url: "/opgave-4" },
   { title: "Opgave 5", url: "/opgave-5" },
 ];
 
