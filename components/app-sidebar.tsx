@@ -20,7 +20,7 @@ const tasks = [
   { title: "7-dages vejrudsigt", url: "/opgave-2" },
   { title: "Bedste pendlermetode", url: "/opgave-3" },
   { title: "Dashboard", url: "/opgave-4" },
-  { title: "Opgave 5", url: "/opgave-5" },
+  { title: "Luftkvalitet", url: "/opgave-5" },
 ];
 
 export function AppSidebar() {
