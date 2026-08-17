@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,23 +16,21 @@ export default function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent) {
+  
+  const { mutate: signUp, isPending } = useMutation({
+    mutationFn: async (credentials: { name: string; email: string; password: string }) => {
+        const { data, error } = await authClient.signUp.email(credentials);
+        if (error) throw new Error(error.message ?? "Kunne ikke oprette bruger");
+        return data;
+    },
+    onSuccess: () => router.push("/opgave-1"),
+    onError: (error) => setError(error.message),
+  });
+  
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setLoading(true);
-
-    const { error } = await authClient.signUp.email({ name, email, password });
-
-    setLoading(false);
-
-    if (error) {
-      setError(error.message ?? "Kunne ikke oprette bruger");
-      return;
-    }
-
-    router.push("/opgave-1");
+    signUp({ name, email, password});
   }
 
   return (
@@ -73,8 +72,8 @@ export default function SignUpPage() {
               />
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" disabled={loading}>
-              {loading ? "Opretter bruger..." : "Opret bruger"}
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Opretter bruger..." : "Opret bruger"}
             </Button>
           </form>
           <p className="text-sm text-muted-foreground text-center mt-4">
