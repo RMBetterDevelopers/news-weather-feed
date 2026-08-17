@@ -14,6 +14,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { Button } from "./ui/button";
 
 const tasks = [
   { title: "Dagens overblik", url: "/opgave-1" },
@@ -25,12 +28,30 @@ const tasks = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { data: session } = authClient.useSession();
+  const router = useRouter();
+
+  async function handleSignOut() {
+    await authClient.signOut();
+    router.push("/login");
+  }
 
   return (
     <Sidebar>
       <SidebarHeader>
         <ThemeToggle />
-        <p></p>
+        {session ? (
+          <div className="flex flex-col gap-2">
+            <p className="px-2 text-sm text-muted-foreground">{session.user.name}</p>
+            <Button variant="outline" size="sm" onClick={handleSignOut}>
+              Log ud
+            </Button>
+          </div>
+        ) : (
+          <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/login" />}>
+            Log ind
+          </Button>
+        )}
         <span className="px-2 text-lg font-semibold">Opgaver</span>
       </SidebarHeader>
       <SidebarContent>
