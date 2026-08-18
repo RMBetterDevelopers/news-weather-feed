@@ -4,42 +4,60 @@ import { NewsArticle } from "../lib/news";
 import NewsCard from "./news-card";
 import { useState } from "react";
 import { Input } from "../../../components/ui/input";
-import { useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface NewsListProps {
   articles: NewsArticle[];
 }
 
 export default function NewsList({ articles }: NewsListProps) {
-    const [query, setQuery] = useState("");
-    const [favorites, setFavorites] = useState<string[]>([]);
-    
-    useEffect(() => {
-        const stored = localStorage.getItem("favorite-news-ids");
-        if (stored) {
-            // eslint-disable-next-line
-            setFavorites(JSON.parse(stored));
-  }
-}, []);
+  const [query, setQuery] = useState("");
 
-useEffect(() => {
-  localStorage.setItem("favorite-news-ids", JSON.stringify(favorites));
-}, [favorites]);
+  const { data: favorites = [] } = useQuery({
+    queryKey: ["favorites"],
+    queryFn: async () => {
+      const res = await fetch("/api/favorites");
+      if (!res.ok) throw new Error("Kunne ikke hente favoritter");
+      return res.json() as Promise<string[]>;
+    },
+  });
 
-    function toggleFavorite(id: string) {
-        setFavorites((prev) => {
-            if (prev.includes(id)) {
-                return prev.filter((favId) => favId !== id);
-            } else {
-                return [...prev, id];
-            }
-        });
-    }
+  const queryClient = useQueryClient();
 
-    const filteredArticles = articles.filter((article) =>
-      article.title.toLowerCase().includes(query.toLowerCase())
-    );
-    return (
+  const { mutate: toggleFavorite } = useMutation({
+    mutationFn: async ({ articleUrl, isFavorite }: { articleUrl: string; isFavorite: boolean }) => {
+      const res = await fetch("/api/favorites", {
+        method: isFavorite ? "DELETE" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ articleUrl }),
+      });
+      if (!res.ok) throw new Error("Kunne ikke opdatere favorit");
+    },
+    onMutate: async ({ articleUrl, isFavorite }) => {
+      await queryClient.cancelQueries({ queryKey: ["favorites"] });
+      const previousFavorites = queryClient.getQueryData<string[]>(["favorites"]);
+
+      queryClient.setQueryData<string[]>(["favorites"], (old = []) =>
+        isFavorite ? old.filter((id) => id !== articleUrl) : [...old, articleUrl]
+      );
+
+      return { previousFavorites };
+    },
+    onError: (_err, _variables, context) => {
+      if (context?.previousFavorites) {
+        queryClient.setQueryData(["favorites"], context.previousFavorites);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
+    },
+  });
+
+  const filteredArticles = articles.filter((article) =>
+    article.title.toLowerCase().includes(query.toLowerCase())
+  );
+
+  return (
     <div>
       <Input
         value={query}
@@ -53,11 +71,13 @@ useEffect(() => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredArticles.map((article) => (
-            <NewsCard 
-            key={article.id} 
-            article={article} 
-            isFavorite={favorites.includes(article.id)}
-            onToggleFavorite={() => toggleFavorite(article.id)}
+            <NewsCard
+              key={article.id}
+              article={article}
+              isFavorite={favorites.includes(article.id)}
+              onToggleFavorite={() =>
+                toggleFavorite({ articleUrl: article.id, isFavorite: favorites.includes(article.id) })
+              }
             />
           ))}
         </div>
