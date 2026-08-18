@@ -1,3 +1,5 @@
+import z from "zod";
+
 export interface NewsArticle {
   id: string;
   title: string;
@@ -7,17 +9,17 @@ export interface NewsArticle {
   imageUrl: string | null;
 }
 
-interface NewsApiArticle {
-  title: string;
-  url: string;
-  publishedAt: string;
-  source: { name: string };
-  urlToImage: string | null;
-}
-
-interface NewsApiResponse {
-  articles: NewsApiArticle[];
-}
+const newsApiResponseSchema = z.object({
+  articles: z.array(
+    z.object({
+      title: z.string(),
+      url: z.string(),
+      publishedAt: z.string(),
+      source: z.object({ name: z.string() }),
+      urlToImage: z.string().nullable(),
+    })
+  ),
+});
 
 export async function getTopNews(): Promise<NewsArticle[]> {
   const apiKey = process.env.NEWS_API_KEY;
@@ -39,7 +41,7 @@ export async function getTopNews(): Promise<NewsArticle[]> {
     throw new Error(`Kunne ikke hente nyheder: ${response.status}`);
   }
 
-  const data: NewsApiResponse = await response.json();
+  const data = newsApiResponseSchema.parse(await response.json());
 
   return data.articles.map((article) => ({
     id: article.url,

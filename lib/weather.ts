@@ -1,3 +1,5 @@
+import z from "zod";
+
 const AARHUS_LATITUDE = 56.1629;
 const AARHUS_LONGITUDE = 10.2039;
 
@@ -22,26 +24,26 @@ export interface DailyForecast {
     weatherCode: number;
 }
 
-interface OpenMeteoResponse {
-    current: {
-        temperature_2m: number;
-        apparent_temperature: number;
-        relative_humidity_2m: number;
-        wind_speed_10m: number;
-        weather_code: number;
-    };
-}
+const openMeteoResponseSchema = z.object({
+  current: z.object({
+    temperature_2m: z.number(),
+    apparent_temperature: z.number(),
+    relative_humidity_2m: z.number(),
+    wind_speed_10m: z.number(),
+    weather_code: z.number(),
+  }),
+});
 
-interface openMeteoForecastResponse {
-    daily: {
-        time: string[];
-        weather_code: number[];
-        temperature_2m_max: number[];
-        temperature_2m_min: number[];
-        precipitation_probability_max: number[];
-        wind_speed_10m_max: number[];
-    };
-}
+const openMeteoForecastResponseSchema = z.object({
+  daily: z.object({
+    time: z.array(z.string()),
+    weather_code: z.array(z.number()),
+    temperature_2m_max: z.array(z.number()),
+    temperature_2m_min: z.array(z.number()),
+    precipitation_probability_max: z.array(z.number()),
+    wind_speed_10m_max: z.array(z.number()),
+  }),
+});
 
 const WEATHER_CODE_DESCRIPTIONS: Record<number, string> = {
   0: "Klar himmel",
@@ -78,7 +80,7 @@ export async function getAarhusWeather(): Promise<WeatherData> {
     throw new Error(`Kunne ikke hente vejrdata: ${response.status}`);
 }
 
-const data: OpenMeteoResponse = await response.json();
+const data = openMeteoResponseSchema.parse(await response.json());
 const current = data.current;
 
 return {
@@ -99,7 +101,7 @@ export async function getAarhusForecast(): Promise<DailyForecast[]> {
         throw new Error(`Kunne ikke hente vejrudsigt: ${response.status}`);
     }
 
-    const data: openMeteoForecastResponse = await response.json();
+    const data = openMeteoForecastResponseSchema.parse(await response.json());
 
     return data.daily.time.map((date, index) => ({
         date,

@@ -1,11 +1,14 @@
 import mockTrafficData from "../data/mock-traffic.json";
+import z from "zod";
 
-export interface TrafficCondition {
-  weekday: string;
-  congestion: "low" | "medium" | "high";
-}
+const trafficConditionSchema = z.object({
+  weekday: z.string(),
+  congestion: z.enum(["low", "medium", "high"]),
+});
 
-const mockTraffic = mockTrafficData as TrafficCondition[];
+export type TrafficCondition = z.infer<typeof trafficConditionSchema>;
+
+const mockTraffic = z.array(trafficConditionSchema).parse(mockTrafficData);
 
 export function getTrafficForDate(date: string): TrafficCondition {
   const weekday = new Date(date).toLocaleDateString("da-DK", { weekday: "long" });

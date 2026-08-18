@@ -1,7 +1,11 @@
-export interface Joke {
-  setup: string;
-  punchline: string;
-}
+import z from "zod";
+
+const jokeSchema = z.object({
+  setup: z.string(),
+  punchline: z.string(),
+});
+
+export type Joke = z.infer<typeof jokeSchema>;
 
 export async function getJoke(): Promise<Joke> {
   const response = await fetch("https://official-joke-api.appspot.com/random_joke", {
@@ -12,7 +16,7 @@ export async function getJoke(): Promise<Joke> {
     throw new Error(`Kunne ikke hente joke: ${response.status}`);
   }
 
-  const data: Joke = await response.json();
+  const data = jokeSchema.parse(await response.json());
 
   return data;
 }
