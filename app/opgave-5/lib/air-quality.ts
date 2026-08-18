@@ -1,4 +1,5 @@
 import mockDataRaw from "../data/mock-air-quality.json";
+import z from "zod";
 
 const AARHUS_LATITUDE = 56.1629;
 const AARHUS_LONGITUDE = 10.2039;
@@ -18,12 +19,33 @@ export interface AirQualityTrendPoint {
   date: string;
 }
 
-interface MockAirQualityData {
-  current: CurrentAirQuality;
-  trend: AirQualityTrendPoint[];
-}
+const currentAirQualitySchema = z.object({
+  current: z.object({
+    european_aqi: z.number(),
+    pm2_5: z.number(),
+    pm10: z.number(),
+    nitrogen_dioxide: z.number(),
+  }),
+});
 
-const mockData = mockDataRaw as MockAirQualityData;
+const airQualityTrendSchema = z.object({
+  hourly: z.object({
+    time: z.array(z.string()),
+    european_aqi: z.array(z.number()),
+    pm2_5: z.array(z.number()),
+    pm10: z.array(z.number()),
+    nitrogen_dioxide: z.array(z.number()),
+  }),
+});
+
+const mockAirQualityDataSchema = z.object({
+  current: z.object({ aqi: z.number(), pm25: z.number(), pm10: z.number(), no2: z.number() }),
+  trend: z.array(
+    z.object({ aqi: z.number(), pm25: z.number(), pm10: z.number(), no2: z.number(), date: z.string() })
+  ),
+});
+
+const mockData = mockAirQualityDataSchema.parse(mockDataRaw);
 
 export async function getCurrentAirQuality(): Promise<CurrentAirQuality> {
   try {
@@ -36,7 +58,7 @@ export async function getCurrentAirQuality(): Promise<CurrentAirQuality> {
       throw new Error(`Status ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = currentAirQualitySchema.parse(await response.json());
 
     return {
       aqi: data.current.european_aqi,
@@ -60,9 +82,9 @@ export async function getAirQualityTrend(): Promise<AirQualityTrendPoint[]> {
       throw new Error(`Status ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = airQualityTrendSchema.parse(await response.json());
 
-    const allPoints = data.hourly.time.map((time: string, index: number) => ({
+    const allPoints = data.hourly.time.map((time, index) => ({
       date: time,
       aqi: data.hourly.european_aqi[index],
       pm25: data.hourly.pm2_5[index],
@@ -70,7 +92,7 @@ export async function getAirQualityTrend(): Promise<AirQualityTrendPoint[]> {
       no2: data.hourly.nitrogen_dioxide[index],
     }));
 
-    return allPoints.filter((point: AirQualityTrendPoint) =>
+    return allPoints.filter((point) =>
       point.date.endsWith("T12:00")
     );
   } catch {

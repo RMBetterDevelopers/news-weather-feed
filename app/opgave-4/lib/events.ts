@@ -1,12 +1,15 @@
 import mockEventsData from "../data/mock-events.json";
+import z from "zod";
 
-export interface CalendarEvent {
-  title: string;
-  date: string;
-  time: string;
-}
+const calendarEventSchema = z.object({
+  title: z.string(),
+  date: z.string(),
+  time: z.string(),
+});
 
-const mockEvents = mockEventsData as CalendarEvent[];
+export type CalendarEvent = z.infer<typeof calendarEventSchema>;
+
+const mockEvents = z.array(calendarEventSchema).parse(mockEventsData);
 
 export async function getUpcomingEvents(): Promise<CalendarEvent[]> {
   return mockEvents;
