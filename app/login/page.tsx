@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,23 +15,21 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  const { mutate: login, isPending } = useMutation({
+    mutationFn: async (credentials: { email: string; password: string }) => {
+      const { data, error } = await authClient.signIn.email(credentials);
+      if (error) throw new Error(error.message ?? "Kunne ikke logge ind");
+      return data;
+    },
+    onSuccess: () => router.push("/opgave-1"),
+    onError: (error) => setError(error.message),
+  });
+
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setLoading(true);
-
-    const { error } = await authClient.signIn.email({ email, password });
-
-    setLoading(false);
-
-    if (error) {
-      setError(error.message ?? "Kunne ikke logge ind");
-      return;
-    }
-
-    router.push("/opgave-1");
+    login({ email, password });
   }
 
   return (
@@ -62,14 +61,14 @@ export default function LoginPage() {
               />
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" disabled={loading}>
-              {loading ? "Logger ind..." : "Log ind"}
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Logger ind..." : "Log ind"}
             </Button>
           </form>
           <p className="text-sm text-muted-foreground text-center mt-4">
             Har du ikke en bruger?{" "}
             <Link href="/sign-up" className="text-primary underline-offset-4 hover:underline">
-            Opret en her
+              Opret en her
             </Link>
           </p>
         </CardContent>

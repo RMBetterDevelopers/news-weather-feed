@@ -4,6 +4,7 @@ import "./globals.css";
 import ThemeProvider from "@/components/theme-provider";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import QueryProvider from "@/components/query-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <QueryProvider>
           <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
@@ -36,6 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               {children}
             </SidebarInset>
           </SidebarProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>
